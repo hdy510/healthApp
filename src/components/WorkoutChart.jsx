@@ -12,18 +12,25 @@ import { format } from 'date-fns';
 ChartJS.register(BarElement, CategoryScale, LinearScale, Tooltip, Legend);
 
 function WorkoutChart({ records, selectedExercise, selectedDate }) {
-  // 1. 날짜 필터링 (과거까지 포함)
+  // 1. 날짜 문자열로 포맷
   const formattedDate = selectedDate ? format(selectedDate, 'yyyy-MM-dd') : null;
+
+  // 2. 선택한 날짜까지의 운동 기록 필터링
   const filteredByDate = formattedDate
     ? records.filter(r => r.date <= formattedDate)
     : records;
 
-  // 2. 종목 필터링
+  // 3. 운동 종목 필터링
   const filtered = selectedExercise === '전체'
     ? filteredByDate
     : filteredByDate.filter(r => r.exercise === selectedExercise);
 
-  // 3. 날짜별 총합 계산
+  // ✅ 4. 선택한 날짜에 실제 운동 기록이 있는지 확인
+  const hasSelectedDateData = formattedDate
+    ? filtered.some(r => r.date === formattedDate)
+    : true;
+
+  // 5. 날짜별 총 강도 계산
   const totalsByDate = {};
   filtered.forEach(record => {
     if (!totalsByDate[record.date]) {
@@ -32,10 +39,10 @@ function WorkoutChart({ records, selectedExercise, selectedDate }) {
     totalsByDate[record.date] += record.intensity;
   });
 
-  // 4. 차트용 데이터 준비
   const labels = Object.keys(totalsByDate).sort();
   const data = labels.map(date => totalsByDate[date]);
 
+  // 6. 차트 데이터 구성
   const chartData = {
     labels,
     datasets: [
@@ -60,6 +67,19 @@ function WorkoutChart({ records, selectedExercise, selectedDate }) {
     },
   };
 
+  // ✅ 7. 조건에 따라 차트 표시 or 안내 메시지
+  if (!hasSelectedDateData || labels.length === 0 || data.length === 0) {
+    return (
+      <div>
+        <h2>📊 운동 강도 변화</h2>
+        <p style={{ color: '#888', textAlign: 'center', marginTop: '2rem' }}>
+          표시할 운동 기록이 없습니다.
+        </p>
+      </div>
+    );
+  }
+
+  // 8. 차트 렌더링
   return (
     <div>
       <h2>📊 운동 강도 변화</h2>

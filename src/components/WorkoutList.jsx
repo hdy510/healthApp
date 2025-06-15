@@ -32,6 +32,18 @@ function WorkoutList({ records, selectedDate, onDelete, onDeleteGroup, onDeleteB
     }
   };
 
+  // 운동기록 없을 때 처리
+  if (Object.keys(grouped).length === 0) {
+    return (
+      <div style={{ marginBottom: '2rem' }}>
+        <h2>📋 운동 기록</h2>
+        <p style={{ color: '#888', textAlign: 'center', marginTop: '2rem' }}>
+          표시할 운동 기록이 없습니다.
+        </p>
+      </div>
+    );
+  }
+
   return (
     <div style={{ marginBottom: '2rem' }}>
       <h2>📋 운동 기록</h2>
