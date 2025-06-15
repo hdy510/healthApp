@@ -5,8 +5,8 @@ import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { format } from 'date-fns';
 
-function WorkoutForm({ onAdd }) {
-  const [date, setDate] = useState(null);
+function WorkoutForm({ onAdd, selectedDate, setSelectedDate }) {
+  // const [date, setDate] = useState(null);
   const [exercise, setExercise] = useState('');
   const [kg, setKg] = useState('');
   const [reps, setReps] = useState('');
@@ -14,9 +14,8 @@ function WorkoutForm({ onAdd }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!date || !exercise || !kg || !reps) return;
-
-    const formattedDate = format(date, 'yyyy-MM-dd');
+    if (!selectedDate || !exercise || !kg || !reps) return;
+    const formattedDate = format(selectedDate, 'yyyy-MM-dd');
 
     const recordData = {
       date: formattedDate,
@@ -44,8 +43,8 @@ function WorkoutForm({ onAdd }) {
     <div style={{ display: 'flex', gap: '2rem', alignItems: 'flex-start' }}>
   <div>
     <DatePicker
-      selected={date}
-      onChange={(selectedDate) => setDate(selectedDate)}
+      selected={selectedDate}
+      onChange={(selectedDate) => setSelectedDate(selectedDate)}
       dateFormat="yyyy-MM-dd"
       inline
       maxDate={new Date()}

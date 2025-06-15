@@ -1,11 +1,17 @@
 import { useState } from 'react';
+import { format } from 'date-fns';
 
-function WorkoutList({ records, onDelete, onDeleteGroup, onDeleteByDate, onUpdate }) {
+function WorkoutList({ records, selectedDate, onDelete, onDeleteGroup, onDeleteByDate, onUpdate }) {
   const [editId, setEditId] = useState(null); // 수정 중인 record의 id
   const [editKg, setEditKg] = useState(0);
   const [editReps, setEditReps] = useState(0);
 
-  const grouped = records.reduce((acc, record) => {
+  const formattedSelectedDate = selectedDate ? format(selectedDate, 'yyyy-MM-dd') : null;
+  const filteredRecords = formattedSelectedDate
+    ? records.filter(r => r.date === formattedSelectedDate)
+    : records;
+
+  const grouped = filteredRecords.reduce((acc, record) => {
     const { date, exercise } = record;
     if (!acc[date]) acc[date] = {};
     if (!acc[date][exercise]) acc[date][exercise] = [];

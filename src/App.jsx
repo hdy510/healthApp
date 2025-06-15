@@ -4,10 +4,12 @@ import { db } from './firebase';
 import WorkoutForm from './components/WorkoutForm';
 import WorkoutList from './components/WorkoutList';
 import WorkoutChart from './components/WorkoutChart';
+import { format } from 'date-fns';
 
 function App() {
   const [records, setRecords] = useState([]);
   const [selectedExercise, setSelectedExercise] = useState('전체');
+  const [selectedDate, setSelectedDate] = useState(null);
 
 
   const fetchRecords = async () => {
@@ -61,9 +63,19 @@ function App() {
     <div style={{ maxWidth: '600px', margin: '0 auto', padding: '2rem' }}>
       <h1>🏋️ 운동 기록</h1>
       
-      <WorkoutForm onAdd={addRecord} />
+      <WorkoutForm
+        onAdd={addRecord}
+        selectedDate={selectedDate}
+        setSelectedDate={setSelectedDate}
+      />
+      {selectedDate && (
+        <div style={{ margin: '1rem 0' }}>
+          <button onClick={() => setSelectedDate(null)}>📅 전체 보기</button>
+        </div>
+      )}
       <WorkoutList
         records={records}
+        selectedDate={selectedDate}
         onDelete={deleteRecord}
         onDeleteGroup={deleteMultipleRecords}
         onDeleteByDate={deleteByDate}
