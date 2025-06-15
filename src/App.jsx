@@ -82,19 +82,29 @@ function App() {
         onUpdate={updateRecord}
       />
 
-      {/* ✅ 여기에 종목 선택 드롭다운 삽입 */}
       <div style={{ margin: '1rem 0' }}>
         <label>운동 종목 선택: </label>
         <select value={selectedExercise} onChange={(e) => setSelectedExercise(e.target.value)}>
           <option value="전체">전체</option>
-          {[...new Set(records.map(r => r.exercise))].map(exercise => (
-            <option key={exercise} value={exercise}>{exercise}</option>
-          ))}
+          {
+            [...new Set(
+              records
+                .filter(r =>
+                  selectedDate ? r.date === format(selectedDate, 'yyyy-MM-dd') : true
+                )
+                .map(r => r.exercise)
+            )].map(exercise => (
+              <option key={exercise} value={exercise}>{exercise}</option>
+            ))
+          }
         </select>
       </div>
 
-      {/* ✅ 선택한 종목에 따라 그래프가 바뀜 */}
-      <WorkoutChart records={records} selectedExercise={selectedExercise} />
+      <WorkoutChart
+        records={records}
+        selectedExercise={selectedExercise}
+        selectedDate={selectedDate}
+      />
     </div>
   );
 }

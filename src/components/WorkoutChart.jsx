@@ -7,16 +7,23 @@ import {
   Tooltip,
   Legend
 } from 'chart.js';
+import { format } from 'date-fns';
 
 ChartJS.register(BarElement, CategoryScale, LinearScale, Tooltip, Legend);
 
-function WorkoutChart({ records, selectedExercise }) {
-  // 1. 종목 필터링
-  const filtered = selectedExercise === '전체'
-    ? records
-    : records.filter(r => r.exercise === selectedExercise);
+function WorkoutChart({ records, selectedExercise, selectedDate }) {
+  // 1. 날짜 필터링 (과거까지 포함)
+  const formattedDate = selectedDate ? format(selectedDate, 'yyyy-MM-dd') : null;
+  const filteredByDate = formattedDate
+    ? records.filter(r => r.date <= formattedDate)
+    : records;
 
-  // 2. 날짜별 총합 계산
+  // 2. 종목 필터링
+  const filtered = selectedExercise === '전체'
+    ? filteredByDate
+    : filteredByDate.filter(r => r.exercise === selectedExercise);
+
+  // 3. 날짜별 총합 계산
   const totalsByDate = {};
   filtered.forEach(record => {
     if (!totalsByDate[record.date]) {
@@ -25,7 +32,7 @@ function WorkoutChart({ records, selectedExercise }) {
     totalsByDate[record.date] += record.intensity;
   });
 
-  // 3. 정렬된 날짜별 데이터 만들기
+  // 4. 차트용 데이터 준비
   const labels = Object.keys(totalsByDate).sort();
   const data = labels.map(date => totalsByDate[date]);
 
@@ -33,7 +40,10 @@ function WorkoutChart({ records, selectedExercise }) {
     labels,
     datasets: [
       {
-        label: selectedExercise === '전체' ? '전체 운동 강도' : `${selectedExercise} 운동 강도`,
+        label:
+          selectedExercise === '전체'
+            ? '전체 운동 강도'
+            : `${selectedExercise} 운동 강도`,
         data,
         backgroundColor: 'rgba(75, 192, 192, 0.7)',
       },
