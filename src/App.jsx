@@ -4,7 +4,7 @@ import { db } from './firebase';
 import WorkoutForm from './components/WorkoutForm';
 import WorkoutList from './components/WorkoutList';
 import WorkoutChart from './components/WorkoutChart';
-import { format } from 'date-fns';
+import { format, parseISO } from 'date-fns';
 
 function App() {
   const [records, setRecords] = useState([]);
@@ -31,18 +31,18 @@ function App() {
   };
 
   const updateRecord = async (id, newKg, newReps) => {
-  const newIntensity = newKg * newReps;
-  await updateDoc(doc(db, 'workouts', id), {
-    kg: newKg,
-    reps: newReps,
-    intensity: newIntensity,
-  });
-  setRecords(prev =>
-    prev.map(r =>
-      r.id === id ? { ...r, kg: newKg, reps: newReps, intensity: newIntensity } : r
-    )
-  );
-};
+    const newIntensity = newKg * newReps;
+    await updateDoc(doc(db, 'workouts', id), {
+      kg: newKg,
+      reps: newReps,
+      intensity: newIntensity,
+    });
+    setRecords(prev =>
+      prev.map(r =>
+        r.id === id ? { ...r, kg: newKg, reps: newReps, intensity: newIntensity } : r
+      )
+    );
+  };
 
   const deleteMultipleRecords = async (ids) => {
     await Promise.all(ids.map(id => deleteDoc(doc(db, 'workouts', id))));
@@ -54,6 +54,9 @@ function App() {
     await Promise.all(toDelete.map(id => deleteDoc(doc(db, 'workouts', id))));
     setRecords(prev => prev.filter(r => r.date !== date));
   };
+
+  const workoutDates = [...new Set(records.map(r => r.date))]
+  .map(dateStr => parseISO(dateStr));   
 
   useEffect(() => {
     fetchRecords();
@@ -67,6 +70,7 @@ function App() {
         onAdd={addRecord}
         selectedDate={selectedDate}
         setSelectedDate={setSelectedDate}
+        highlightDates={workoutDates}
       />
       {selectedDate && (
         <div style={{ margin: '1rem 0' }}>

@@ -5,7 +5,7 @@ import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { format } from 'date-fns';
 
-function WorkoutForm({ onAdd, selectedDate, setSelectedDate }) {
+function WorkoutForm({ onAdd, selectedDate, setSelectedDate, highlightDates }) {
   // const [date, setDate] = useState(null);
   const [exercise, setExercise] = useState('');
   const [kg, setKg] = useState('');
@@ -48,6 +48,7 @@ function WorkoutForm({ onAdd, selectedDate, setSelectedDate }) {
       dateFormat="yyyy-MM-dd"
       inline
       maxDate={new Date()}
+      highlightDates={highlightDates}
     />
   </div>
 
