@@ -4,6 +4,7 @@ import { db } from '../firebase';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { format } from 'date-fns';
+import Timer from './Timer';
 
 function WorkoutForm({ onAdd, selectedDate, setSelectedDate, highlightDates }) {
   // const [date, setDate] = useState(null);
@@ -67,6 +68,8 @@ function WorkoutForm({ onAdd, selectedDate, setSelectedDate, highlightDates }) {
     </div>
     <button type="submit" style={{ marginTop: '1rem' }}>기록 추가</button>
   </form>
+
+  <Timer />
 </div>
 
   );
